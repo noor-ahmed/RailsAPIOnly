@@ -1,14 +1,17 @@
 class UserSessionsController < ApplicationController
-
+  require 'json'
   # login
   def create
-    email = JSON.parse (params[:email])
-    @user = set_user(email)
-    if @user && !@user.active?
+    @user = set_user(params[:email])
+    @password = params[:password]
+    if (!@user.active? && @user.password == @password)
+      byebug
       @user.update_attribute( :active , true)
       json_response(@user, :ok)
+    else
+      byebug
+      json_response(nil, :not_ok)
     end
-    json_response(@user, :not_ok)
   end
 
   def show
